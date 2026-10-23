@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>proAM Labs — Thinking Graph Arena Prototype</title>
+<title>Thinking Graph Arena — Interactive Prototype</title>
 <style>
 :root{--bg:#07131f;--panel:#0d1f2d;--text:#eef5fb;--muted:#9eb5c8;--blue:#4fdcff;--gold:#ffc857;--red:#ff5151;--green:#6df28f}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Inter,Segoe UI,system-ui,sans-serif;background:radial-gradient(circle at 50% -10%,rgba(79,220,255,.10),transparent 35%),linear-gradient(180deg,#07131f,#061019 75%);color:var(--text)}
@@ -14,7 +14,7 @@ header{padding:18px 22px 8px;max-width:1500px;margin:auto}h1{font-size:26px;marg
 </style>
 </head>
 <body>
-<header><h1>Thinking Graph Arena — Small Runtime Prototype</h1><div class="subtitle">Architecture stays fixed. The active path changes by case. Blue = data/evidence, green = federated query, gold = authority, red = governance boundary.</div></header>
+<header><h1>Thinking Graph Arena — Interactive Prototype</h1><div class="subtitle">Architecture stays fixed. The active path changes by case. Blue = data/evidence, green = federated query, gold = authority, red = governance boundary.</div></header>
 <div class="app">
 <section class="arena-wrap">
 <div class="toolbar"><select id="caseSelect"><option value="live">LIVE observation</option><option value="land">LAND historical observation</option><option value="query">Query-in-place</option><option value="combined">Combined convergence</option></select><button class="primary" id="playBtn">▶ Play</button><button id="pauseBtn">⏸ Pause</button><button id="stepBtn">→ Step</button><button id="resetBtn">↺ Reset</button><div class="status-pill"><span id="runDot" class="status-dot"></span><span id="runText">Ready</span></div></div>
