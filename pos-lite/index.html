@@ -92,4 +92,19 @@ document.getElementById('clear-porch-context').onclick=()=>{
  document.getElementById('porch-context-input').value='';
  document.getElementById('chatgpt-handoff-note').textContent='Context cleared. Enter a new idea to continue.';
 };
+</script><script>
+(function(){
+ const key='proam.handoff.diagnostics.v1',ua=navigator.userAgent||'';
+ const browser=/CriOS\//.test(ua)?'Chrome iOS':/FxiOS\//.test(ua)?'Firefox iOS':/EdgiOS\//.test(ua)?'Edge iOS':/Safari\//.test(ua)?'Safari':/Chrome\//.test(ua)?'Chrome':'Other/unknown';
+ const device=/iPhone/.test(ua)?'iPhone (model unknown)':/iPad/.test(ua)?'iPad':/Android/.test(ua)?'Android (model unverified)':'Other';
+ const platform=/iPhone|iPad/.test(ua)?'iOS/iPadOS':/Android/.test(ua)?'Android':'Other';
+ const log=(step,details={})=>{try{const events=JSON.parse(localStorage.getItem(key)||'[]');events.push({time:new Date().toISOString(),page:'pos-lite',step,...details});localStorage.setItem(key,JSON.stringify(events.slice(-40)))}catch(e){}};
+ const raw=(()=>{try{return sessionStorage.getItem('proam.frontPorch.context.v1')}catch(e){return null}})();
+ let length=0;try{length=raw?JSON.parse(raw).text?.length||0:0}catch(e){}
+ log('pos_lite_arrival',{recordFound:!!raw,recordLength:length,inputLength:document.getElementById('porch-context-input')?.value.length||0});
+ const panel=document.createElement('details');panel.style.cssText='margin:12px;padding:12px;border:1px solid #557489;border-radius:9px;color:#fff;background:#102a3a;font:14px system-ui';
+ panel.innerHTML='<summary style="cursor:pointer">Handoff diagnostics · local only</summary><p>Browser: '+browser+' | Device: '+device+' | OS: '+platform+'</p><p>Received context: '+(length?'yes ('+length+' characters)':'not found')+'. This report contains no plan text. No automatic upload.</p><button type="button" id="export-handoff-diagnostics" style="padding:10px">Download diagnostic JSON</button>';
+ document.body.appendChild(panel);
+ document.getElementById('export-handoff-diagnostics').onclick=()=>{let events=[];try{events=JSON.parse(localStorage.getItem(key)||'[]')}catch(e){};const payload={schema:'proam-handoff-diagnostics/v0.1',browser,device,platform,userAgent:ua,events};const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='proam-handoff-diagnostics.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+})();
 </script></body></html>
