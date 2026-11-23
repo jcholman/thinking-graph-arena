@@ -69,7 +69,7 @@ const buildChatPrompt=()=>[
  '',
  'MY CANDIDATE PLAN:',
  document.getElementById('porch-context-text').textContent
-].join('\\n');
+].join('\n');
 document.getElementById('chatgpt-handoff').onclick=()=>{
  const text=document.getElementById('porch-context-text').textContent.trim();
  if(!text){document.getElementById('chatgpt-handoff-note').textContent='No context is available. Return to Conceptualists and create a demonstration plan first.';return}
