@@ -19,7 +19,7 @@ details{border:1px solid #203b4e;background:#081a27;border-radius:13px;margin:8p
 </style><link rel="apple-touch-icon" sizes="180x180" href="/proam-labs-demos/showcase/assets/icons/proam-labs-apple-touch-icon-180x180.png?v=tan-1"><meta name="apple-mobile-web-app-title" content="POS-Lite"></head>
 <body><div class="app">
 <header class="top"><div class="brand"><a class="logo" href="./" aria-label="POS-Lite — Personal Orientation System home" title="POS-Lite home"><img src="https://jcholman.github.io/proam-labs-demos/showcase/assets/proam-logo.png" alt="proAM Labs emblem" width="42" height="42"></a><div><b>proAM Labs · POS-Lite</b><small>Personal Mobile Bridge · v0.35</small></div><span class="mode">DEMO MODE</span></div><nav class="tabs"><button class="on" data-screen="queue">QUEUE</button><button data-screen="queue">MATCHUP</button><button data-screen="detail">ORIENT</button><button data-screen="depth">ARENA</button></nav></header>
-<main id="queue" class="screen on"><div class="pad"><section id="porch-context" class="card" hidden><div class="eyebrow">FROM YOUR FRONT PORCH</div><h2>What are we going to do, now?</h2><p id="porch-context-text" style="white-space:pre-wrap;overflow-wrap:anywhere"></p><p class="muted">Your starting context, carried locally. Not yet interpreted, saved to the Thinking Graph, or matched to the demo observations below.</p><div class="llm-handoff"><button id="chatgpt-handoff" type="button">Continue in ChatGPT ↗</button><button id="copy-porch-context" type="button">Copy context</button><p class="muted" id="chatgpt-handoff-note">Review your context before opening ChatGPT. This prototype does not automatically send a message or verify an AI-generated result. Do not include confidential information.</p></div><button id="clear-porch-context">Clear starting context</button></section><section class="card"><div class="eyebrow">The Automatons · personal view</div><h2>What needs my attention?</h2><div class="muted">Same work. More orientation. Find what changed, what is related, what remains unresolved, and what can happen next.</div><div class="badges"><span class="badge qualified">5 demo observations</span><span class="badge">fixture data</span><span class="badge review">0 real actions</span></div></section><div class="tools"><div class="search">⌕<input id="q" placeholder="Search title, context, ID, artifact…"></div><button id="clear">×</button><select id="sort"><option value="activity">Recent</option><option value="title">Title</option><option value="state">State</option></select></div><div id="filters" class="filters"></div><div class="section"><b>Observation Queue</b><small id="count"></small></div><div id="rows" class="queue"></div><div class="note"><b>Trust boundary:</b> OBS IDs, counts, relationships and dates here are contract-shaped fixture data. Missing values render as UNKNOWN or NOT MEASURED—not zero.</div></div></main>
+<main id="queue" class="screen on"><div class="pad"><section id="porch-context" class="card"><div class="eyebrow">START BUILDING · CAPABILITY DEMONSTRATION</div><h2>What are we going to do, now?</h2><label for="porch-context-input" style="display:block;margin:12px 0 7px">Your starting context</label><textarea id="porch-context-input" maxlength="4000" placeholder="Describe a capability, problem you solved, or demonstration you want to create. If you arrived through the Front Porch, your plan will appear here." style="width:100%;min-height:145px;box-sizing:border-box;padding:12px;border:1px solid #426174;border-radius:10px;background:#091d2c;color:#fff;font:inherit;line-height:1.5"></textarea><p id="porch-context-text" hidden></p><p class="muted">Your starting context, carried locally. Not yet interpreted, saved to the Thinking Graph, or matched to the demo observations below.</p><div class="llm-handoff"><button id="chatgpt-handoff" type="button">Continue in ChatGPT ↗</button><button id="copy-porch-context" type="button">Copy context</button><p class="muted" id="chatgpt-handoff-note">Review your context before opening ChatGPT. This prototype does not automatically send a message or verify an AI-generated result. Do not include confidential information.</p></div><button id="clear-porch-context">Clear starting context</button></section><section class="card"><div class="eyebrow">The Automatons · personal view</div><h2>What needs my attention?</h2><div class="muted">Same work. More orientation. Find what changed, what is related, what remains unresolved, and what can happen next.</div><div class="badges"><span class="badge qualified">5 demo observations</span><span class="badge">fixture data</span><span class="badge review">0 real actions</span></div></section><div class="tools"><div class="search">⌕<input id="q" placeholder="Search title, context, ID, artifact…"></div><button id="clear">×</button><select id="sort"><option value="activity">Recent</option><option value="title">Title</option><option value="state">State</option></select></div><div id="filters" class="filters"></div><div class="section"><b>Observation Queue</b><small id="count"></small></div><div id="rows" class="queue"></div><div class="note"><b>Trust boundary:</b> OBS IDs, counts, relationships and dates here are contract-shaped fixture data. Missing values render as UNKNOWN or NOT MEASURED—not zero.</div></div></main>
 <main id="detail" class="screen"><div id="detailBody" class="pad"></div></main>
 <main id="depth" class="screen"><div id="depthBody" class="pad"></div></main>
 <main id="contract" class="screen"><div id="contractBody" class="pad"></div></main>
@@ -58,7 +58,7 @@ $('#q').oninput=e=>{query=e.target.value;rows()};$('#clear').onclick=()=>{$('#q'
 try{
  const key='proam.frontPorch.context.v1',raw=sessionStorage.getItem(key);
  if(raw){const c=JSON.parse(raw);if(typeof c.text==='string'&&c.text.trim()&&Number.isFinite(c.at)&&Date.now()-c.at>=0&&Date.now()-c.at<3600000){
- document.getElementById('porch-context-text').textContent=c.text.slice(0,4000);
+ document.getElementById('porch-context-input').value=c.text.slice(0,4000);
  document.getElementById('porch-context').hidden=false;
  }else sessionStorage.removeItem(key);}
 }catch(error){}
@@ -68,11 +68,11 @@ const buildChatPrompt=()=>[
  'Help me identify the smallest safe, inspectable artifact I could build. Begin by checking my intent, available tools, and what information must remain private. Suggest synthetic/public data where needed. Separate my own contributions from AI-generated work; propose reproducible tests and independent qualification criteria. Do not infer that the work is verified, and do not take external actions without authorization.',
  '',
  'MY CANDIDATE PLAN:',
- document.getElementById('porch-context-text').textContent
+ document.getElementById('porch-context-input').value
 ].join('\n');
 document.getElementById('chatgpt-handoff').onclick=()=>{
- const text=document.getElementById('porch-context-text').textContent.trim();
- if(!text){document.getElementById('chatgpt-handoff-note').textContent='No context is available. Return to Conceptualists and create a demonstration plan first.';return}
+ const text=document.getElementById('porch-context-input').value.trim();
+ if(!text){document.getElementById('chatgpt-handoff-note').textContent='Enter a capability or demonstration idea above, or start from Conceptualists.';return}
  const message=buildChatPrompt();
  const url='https://chatgpt.com/?q='+encodeURIComponent(message);
  if(url.length>7000){
@@ -89,7 +89,7 @@ document.getElementById('copy-porch-context').onclick=async()=>{
 };
 document.getElementById('clear-porch-context').onclick=()=>{
  try{sessionStorage.removeItem('proam.frontPorch.context.v1');}catch(error){}
- document.getElementById('porch-context-text').textContent='';
- document.getElementById('porch-context').hidden=true;
+ document.getElementById('porch-context-input').value='';
+ document.getElementById('chatgpt-handoff-note').textContent='Context cleared. Enter a new idea to continue.';
 };
 </script></body></html>
