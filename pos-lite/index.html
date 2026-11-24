@@ -62,29 +62,23 @@ try{
  document.getElementById('porch-context').hidden=false;
  }else sessionStorage.removeItem(key);}
 }catch(error){}
-const buildChatPrompt=()=>[
- 'I am beginning a proAM Labs Conceptualists capability-demonstration exercise.',
- 'Treat the following as a self-described candidate plan, NOT proof of capability.',
- 'Help me identify the smallest safe, inspectable artifact I could build. Begin by checking my intent, available tools, and what information must remain private. Suggest synthetic/public data where needed. Separate my own contributions from AI-generated work; propose reproducible tests and independent qualification criteria. Do not infer that the work is verified, and do not take external actions without authorization.',
- '',
- 'MY CANDIDATE PLAN:',
- document.getElementById('porch-context-input').value
-].join('\n');
+// The editable context field is the sole source of truth for copy and ChatGPT handoff.
+const currentContext=()=>document.getElementById('porch-context-input').value;
 document.getElementById('chatgpt-handoff').onclick=()=>{
  const text=document.getElementById('porch-context-input').value.trim();
  if(!text){document.getElementById('chatgpt-handoff-note').textContent='Enter a capability or demonstration idea above, or start from Conceptualists.';return}
- const message=buildChatPrompt();
+ const message=currentContext();
  const url='https://chatgpt.com/?q='+encodeURIComponent(message);
  if(url.length>7000){
-  document.getElementById('chatgpt-handoff-note').textContent='This plan is too long for a reliable link. Use Copy context, then paste it into ChatGPT manually.';
+  document.getElementById('chatgpt-handoff-note').textContent='This context is too long for a reliable link. Use Copy context, then paste it into ChatGPT manually.';
   return;
  }
  document.getElementById('chatgpt-handoff-note').textContent='Opening ChatGPT with a proposed draft. Review and send it there; transfer behavior depends on ChatGPT and your browser.';
  window.open(url,'_blank','noopener,noreferrer');
 };
 document.getElementById('copy-porch-context').onclick=async()=>{
- const text=buildChatPrompt();
- try{await navigator.clipboard.writeText(text);document.getElementById('chatgpt-handoff-note').textContent='Prompt copied. Open ChatGPT and paste it to continue.'}
+ const text=currentContext();
+ try{await navigator.clipboard.writeText(text);document.getElementById('chatgpt-handoff-note').textContent='Context copied exactly as shown. Open ChatGPT and paste it to continue.'}
  catch(error){document.getElementById('chatgpt-handoff-note').textContent='Clipboard unavailable in this browser. Select and copy the context above.'}
 };
 document.getElementById('clear-porch-context').onclick=()=>{
